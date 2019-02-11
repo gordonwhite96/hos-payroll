@@ -86,7 +86,7 @@ def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
             vname=vehicles[vid]
         if log['status']==oldstatus:
             pass
-        elif len(sortedlogs)<2 and log['status']=='OFF_DUTY':
+        elif len(logs)<2 and log['status']=='OFF_DUTY':
             pass
         elif log['status']=='ON_DUTY' and oldstatus=='DRIVING':
             pass
