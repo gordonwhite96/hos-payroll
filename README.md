@@ -10,8 +10,8 @@ If a driver goes from off duty to on duty using the 'On Duty - Commuting' vehicl
 Note:  create a config.py file in the same directory as suncoast_hos.py.  
 The contents of config.py should be as follows:
 
-'''
+```
 #config.py
 token='abc123'
 group='12345'
-'''
+```
