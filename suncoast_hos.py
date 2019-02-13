@@ -17,7 +17,7 @@ import sys
 debug=False
 
 def get_times():
-    midnight = datetime.combine(datetime.today(), time.min)
+    midnight = datetime.combine(datetime.today()-timedelta(days=1), time.min)
     yesterday_midnight = midnight - timedelta(days=1)
     startms=int(yesterday_midnight.strftime('%s'))*1000+1
     endms=int(midnight.strftime('%s'))*1000-1
