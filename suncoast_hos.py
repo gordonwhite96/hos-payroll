@@ -6,7 +6,10 @@
 # Gordon White / gordon@samsara.com
 #
 # Purpose: pull Samsara API HOS data and output CSV
-from datetime import timedelta, datetime, time
+#from datetime import timedelta, datetime, time
+import datetime as dt
+import time
+from datetime import timedelta
 import config
 import requests
 import json
@@ -17,10 +20,11 @@ import sys
 debug=False
 
 def get_times():
-    midnight = datetime.combine(datetime.today()-timedelta(days=1), time.min)
+    midnight = dt.datetime.combine(dt.datetime.today() - timedelta(days=1), dt.time.min)
     yesterday_midnight = midnight - timedelta(days=1)
-    startms=int(yesterday_midnight.strftime('%s'))*1000+1
-    endms=int(midnight.strftime('%s'))*1000-1
+    startms =  int(time.mktime(yesterday_midnight.timetuple()) * 1000)+1
+    endms = int(time.mktime(midnight.timetuple()) * 1000)-1
+    #print startms, endms
     return (startms, endms)
 
 def getdrivers(token, group):
@@ -121,8 +125,9 @@ def main():
     times=get_times()
     vehicles=get_vehicles(config.token, config.group)
     alldrivers = getdrivers(config.token, config.group)
-    drivefile= datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')+'.csv'
-    commuterfile= datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')+'-commute.csv'
+    #drivefile= datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')+'.csv'
+    drivefile= dt.datetime.strftime(dt.datetime.now() - timedelta(1), '%Y-%m-%d')+'.csv'
+    commuterfile= dt.datetime.strftime(dt.datetime.now() - timedelta(1), '%Y-%m-%d')+'-commute.csv'
     outDrive=open(drivefile, 'w')
     outCommute=open(commuterfile, 'w')
     with outDrive, outCommute:
@@ -144,6 +149,5 @@ def main():
             logs = getlogs(config.token, config.group, driverid, times[0], times[1])
             sortedlogs = collections.OrderedDict(sorted(logs.items()))
             processlogs(sortedlogs,vehicles,fname,lname,username,drivewriter,commutewriter)
-
 if __name__ == "__main__":
     main()
