@@ -81,8 +81,8 @@ def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
     oldstatus=''
     for k,log in logs.items():
         s = log['startms']/1000
-        datestamp=datetime.fromtimestamp(s).strftime('%Y-%m-%d')
-        timestamp=datetime.fromtimestamp(s).strftime('%H:%M:%S')
+        datestamp=dt.datetime.fromtimestamp(s).strftime('%Y-%m-%d')
+        timestamp=dt.datetime.fromtimestamp(s).strftime('%H:%M:%S')
         vid=str(log['vid'])
         if vid=='0':
             vname=''
