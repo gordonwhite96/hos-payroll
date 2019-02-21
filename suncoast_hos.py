@@ -69,13 +69,21 @@ def getlogs(token, group, driverid, startms, endms):
     "startMs":'+str(startms)+',"endMs":'+str(endms)+'}'
     logs = requests.post('https://api.samsara.com/v1/fleet/hos_logs',
            params=params, data=postdata)
-    data = json.loads(logs.text)
-    i=0;
-    for log in data['logs']:
-        d[i]={"startms":log['logStartMs'],"status":log['hosStatusType'],\
-        "vid":log['vehicleId']}
-        i=i+1
-    return d
+    if not logs.text:
+        print "Error log", logs
+        d=0
+        return d
+    try:
+        data = json.loads(logs.text)
+        i=0;
+        for log in data['logs']:
+            d[i]={"startms":log['logStartMs'],"status":log['hosStatusType'],\
+            "vid":log['vehicleId']}
+            i=i+1
+        return d
+    except:
+        print "failed getting logs"
+        return 0
 
 def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
     oldstatus=''
@@ -125,7 +133,7 @@ def main():
     times=get_times()
     vehicles=get_vehicles(config.token, config.group)
     alldrivers = getdrivers(config.token, config.group)
-    #drivefile= datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')+'.csv'
+    print "Found: %d drivers" % len (alldrivers)
     drivefile= dt.datetime.strftime(dt.datetime.now() - timedelta(1), '%Y-%m-%d')+'.csv'
     commuterfile= dt.datetime.strftime(dt.datetime.now() - timedelta(1), '%Y-%m-%d')+'-commute.csv'
     outDrive=open(drivefile, 'w')
