@@ -53,7 +53,7 @@ def get_vehicles(token,group):
     params = ( ('access_token', token),)
     groupId = group
     postdata = '{"groupId":'+group+'}'
-    vehiclelist = requests.post('https://us5.api.samsara.com/v1/fleet/list', 
+    vehiclelist = requests.post('https://api.samsara.com/v1/fleet/list', 
             params=params, data=postdata)
     data = json.loads(vehiclelist.text)
     for vehicle in data['vehicles']:
@@ -134,8 +134,8 @@ def main():
     vehicles=get_vehicles(config.token, config.group)
     alldrivers = getdrivers(config.token, config.group)
     print "Found: %d drivers" % len (alldrivers)
-    drivefile= dt.datetime.strftime(dt.datetime.now() - timedelta(1), '%Y-%m-%d')+'.csv'
-    commuterfile= dt.datetime.strftime(dt.datetime.now() - timedelta(1), '%Y-%m-%d')+'-commute.csv'
+    drivefile= dt.datetime.strftime(dt.datetime.now() - timedelta(2), '%Y-%m-%d')+'.csv'
+    commuterfile= dt.datetime.strftime(dt.datetime.now() - timedelta(2), '%Y-%m-%d')+'-commute.csv'
     outDrive=open(drivefile, 'w')
     outCommute=open(commuterfile, 'w')
     with outDrive, outCommute:
