@@ -20,7 +20,7 @@ import sys
 debug=False
 
 def get_times():
-    midnight = dt.datetime.combine(dt.datetime.today() - timedelta(days=1), dt.time.min)
+    midnight = dt.datetime.combine(dt.datetime.today() - timedelta(days=6), dt.time.min)
     yesterday_midnight = midnight - timedelta(days=1)
     startms =  int(time.mktime(yesterday_midnight.timetuple()) * 1000)+1
     endms = int(time.mktime(midnight.timetuple()) * 1000)-1
@@ -95,7 +95,11 @@ def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
         if vid=='0':
             vname=''
         else:
-            vname=vehicles[vid]
+            try:
+                vname=vehicles[vid]
+            except KeyError as e:
+                print "got an error"
+                vname='UNKNOWN'
         if log['status']==oldstatus:
             pass
         elif len(logs)<2 and log['status']=='OFF_DUTY':
@@ -111,7 +115,10 @@ def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
             if vid=='0':
                 vname=''
             else:
-                vname=vehicles[vid]
+                try:
+                    vname=vehicles[vid]
+                except KeyError as e:
+                    vname='UNKNOWN'
             if log['status']=='ON_DUTY' or log['status']=='DRIVING':
                 # going on duty
                 if vname == 'On Duty - Commuting':

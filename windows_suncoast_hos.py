@@ -5,8 +5,15 @@
 # 10 December 2018
 # Gordon White / gordon@samsara.com
 #
+# 15 March 2019
+# Ashok Vempuli / ashok_v@preludesys.com
+# Jagan Ramireddy
+# Added enhancements - refer release notes for details
+#
 # Purpose: pull Samsara API HOS data and output CSV
-#from datetime import timedelta, datetime, time
+# from datetime import timedelta, datetime, time
+# Version 1.1
+#
 import datetime as dt
 import time
 from datetime import timedelta
@@ -95,7 +102,11 @@ def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
         if vid=='0':
             vname=''
         else:
-            vname=vehicles[vid]
+            try:
+                vname=vehicles[vid]
+            except KeyError as e:
+                print "got an error"
+                vname='UNKNOWN'
         if log['status']==oldstatus:
             pass
         elif len(logs)<2 and log['status']=='OFF_DUTY':
@@ -111,7 +122,10 @@ def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
             if vid=='0':
                 vname=''
             else:
-                vname=vehicles[vid]
+                try:
+                    vname=vehicles[vid]
+                except KeyError as e:
+                    vname='UNKNOWN'
             if log['status']=='ON_DUTY' or log['status']=='DRIVING':
                 # going on duty
                 if vname == 'On Duty - Commuting':
@@ -124,9 +138,12 @@ def processlogs(logs,vehicles,fname,lname,username,drivew,commutew):
                 inout=2
             else:
                 inout=3
-            csvfile.writerow({'Punch Date': datestamp,\
-            "Punch Time":timestamp,"First Name":fname,"Last Name":lname,\
-            "In Out":inout,"Job Number":vname,"Card":username})
+            if timestamp!='00:00:00':
+               csvfile.writerow({'Punch Date': datestamp, \
+                              "Punch Time": timestamp, "First Name": fname, "Last Name": lname, \
+                              "In Out": inout, "Job Number": vname, "Card": username, "Department Number": 0, \
+                              "Department Transfer": 0, \
+                              "Lunch Break": 3, "Job Transfer": 0, "Quantity": 0, "Task Number": 0, "Tips": 0})
         oldstatus=log['status']
 
 def main():
@@ -136,10 +153,12 @@ def main():
     print "Found: %d drivers" % len (alldrivers)
     drivefile= dt.datetime.strftime(dt.datetime.now() - timedelta(2), '\\\\sunfasa\\hos_payroll$\\%Y-%m-%d')+'.csv'
     commuterfile= dt.datetime.strftime(dt.datetime.now() - timedelta(2), '\\\\sunfasa\\hos_payroll$\\%Y-%m-%d')+'-commute.csv'
-    outDrive=open(drivefile, 'w')
-    outCommute=open(commuterfile, 'w')
+    outDrive=open(drivefile, 'wb')
+    outCommute=open(commuterfile, 'wb')
     with outDrive, outCommute:
-        myFields=["Punch Date","Punch Time","First Name","Last Name","Middle Name","Card","Download ID","In Out","Job Number"]
+        myFields = ["Punch Date", "Punch Time", "First Name", "Last Name", "Middle Name", "Card", "Download ID", \
+                    "Department Number", "Department Transfer", "In Out", "Lunch Break", \
+                    "Job Number", "Job Transfer", "Quantity", "Task Number", "Tips", "Phone Number"]
         drivewriter = csv.DictWriter(outDrive, fieldnames=myFields)
         commutewriter = csv.DictWriter(outCommute, fieldnames=myFields)
         drivewriter.writeheader()
